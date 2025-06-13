@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>⚙️ Settings</h2>
+
+<!-- Add Camera -->
+<form method="POST" action="/settings" style="max-width: 500px;">
+    <label>📷 Camera Name:</label><br>
+    <input type="text" name="camera_name" placeholder="Enter camera name" required><br><br>
+
+    <label>🔗 RTSP URL:</label><br>
+    <input type="text" name="camera_url" placeholder="rtsp://..." required><br><br>
+
+    <button type="submit" class="btn">➕ Add Camera</button>
+</form>
+
+<hr style="margin: 20px 0;">
+
+<!-- Camera List -->
+{% if cameras %}
+<h3>📋 Camera List</h3>
+<table class="data-table">
+    <thead><tr><th>Details</th><th>Action</th></tr></thead>
+    <tbody>
+    {% for name, url in cameras.items() %}
+    <tr>
+        <td>
+            <form method="POST" action="/update_camera" style="display: flex; gap: 5px;">
+                <input type="hidden" name="original_name" value="{{ name }}">
+                <input type="text" name="camera_name" value="{{ name }}" required style="width: 120px;">
+                <input type="text" name="camera_url" value="{{ url }}" required style="width: 250px;">
+                <button type="submit" class="btn">💾</button>
+            </form>
+        </td>
+        <td><a href="/delete_camera/{{ name }}" onclick="return confirm('Delete camera?')">🗑️ Delete</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<hr style="margin: 20px 0;">
+
+<!-- Archive Settings -->
+<h3>🧹 Archive Settings</h3>
+<form method="POST" action="/settings/archive">
+    <label>Keep logs (days):</label>
+    <input type="number" name="archive_days" value="{{ archive_days }}" min="1">
+    <button class="btn">💾 Save</button>
+</form>
+
+<hr style="margin: 20px 0;">
+
+<!-- License -->
+<h3>🔐 License Key</h3>
+<form method="POST" action="/settings/license">
+    <label>Enter License:</label>
+    <input type="text" name="license_key" value="{{ current_key }}">
+    <button class="btn">🔐 Validate</button>
+</form>
+
+{% if current_key %}
+    {% if days_left <= 10 %}
+        <p style="color: red;">⚠️ License expiring soon — <strong>{{ days_left }} day{{ 's' if days_left != 1 else '' }}</strong> remaining!</p>
+    {% else %}
+        <p style="color: green;">✅ License valid — <strong>{{ days_left }} day{{ 's' if days_left != 1 else '' }}</strong> remaining</p>
+    {% endif %}
+{% endif %}
+{% endblock %}

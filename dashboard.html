@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GuardView ANPR Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            color: white;
+        }
+        .topnav {
+            background-color: #1e293b;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .topnav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+            font-weight: bold;
+        }
+        .topnav a:hover {
+            color: #60a5fa;
+        }
+        .container {
+            display: flex;
+            height: calc(100vh - 50px);
+        }
+        .sidebar {
+            width: 220px;
+            background-color: #1e293b;
+            padding: 15px;
+            border-right: 2px solid #334155;
+            overflow-y: auto;
+        }
+        .sidebar h3 {
+            font-size: 16px;
+            color: #60a5fa;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            padding: 8px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            background-color: #0f172a;
+            border-radius: 5px;
+        }
+        .sidebar ul li:hover {
+            background-color: #334155;
+        }
+        .main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main iframe, .main img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 10px;
+            background-color: #000;
+        }
+        .events {
+            width: 400px;
+            background-color: #1e293b;
+            padding: 15px;
+            overflow-y: auto;
+            border-left: 2px solid #334155;
+        }
+        .events h3 {
+            color: #60a5fa;
+        }
+        .event-card {
+            background-color: #334155;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .event-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .event-card p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topnav">
+        <div>
+            <a href="/dashboard">Home</a>
+            <a href="/report">Report</a>
+            <a href="/settings">Settings</a>
+            <a href="/about">About</a>
+        </div>
+        <div><strong>GuardView ANPR System</strong></div>
+    </div>
+
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <h3>📷 Cameras</h3>
+            <ul>
+                {% for cam in cameras %}
+                <li ondblclick="startStream('{{ cam }}')">{{ cam }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Center Stream -->
+        <div class="main">
+            <div id="stream-area">
+                <p style="text-align: center;">Double-click a camera to start preview</p>
+            </div>
+        </div>
+
+        <!-- Right Live Events -->
+        <div class="events">
+            <h3>Live Events</h3>
+            <div id="live-events"></div>
+        </div>
+    </div>
+
+    <script>
+        function loadLiveEvents() {
+            fetch('/latest_events')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('live-events').innerHTML = data;
+                });
+        }
+        loadLiveEvents();
+        setInterval(loadLiveEvents, 10000);
+
+        function startStream(cameraName) {
+            fetch('/select_camera?name=' + encodeURIComponent(cameraName))
+                .then(() => {
+                    document.getElementById('stream-area').innerHTML =
+                        '<img src="/video_feed" style="width: 100%; border-radius:10px;">';
+                });
+        }
+    </script>
+</body>
+</html>

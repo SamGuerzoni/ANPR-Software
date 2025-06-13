@@ -1,0 +1,8 @@
+{% for log in logs %}
+<div class="event-card">
+    <img src="/static/uploads/{{ log[1] }}" alt="Plate Image">
+    <p><strong>Plate:</strong> {{ log[2] }}</p>
+    <p><strong>Time:</strong> {{ log[3] }}</p>
+    <p><strong>Camera:</strong> {{ log[4] }}</p>
+</div>
+{% endfor %}

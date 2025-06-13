@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2 style="margin-bottom: 15px;">📊 ANPR Event Report</h2>
+
+<form method="GET" action="/report" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 20px;">
+    <label>📅 Filter:</label>
+    <select name="filter" onchange="toggleDateInputs(this.value)">
+        <option value="today" {% if filter == 'today' %}selected{% endif %}>Today</option>
+        <option value="week" {% if filter == 'week' %}selected{% endif %}>This Week</option>
+        <option value="month" {% if filter == 'month' %}selected{% endif %}>This Month</option>
+        <option value="custom" {% if filter == 'custom' %}selected{% endif %}>Custom</option>
+    </select>
+
+    <input type="date" name="start" id="startDate" {% if filter != 'custom' %}style="display:none;"{% endif %} value="{{ start }}">
+    <input type="date" name="end" id="endDate" {% if filter != 'custom' %}style="display:none;"{% endif %} value="{{ end }}">
+
+    <select name="camera">
+        <option value="">All Cameras</option>
+        {% for cam in camera_list %}
+            <option value="{{ cam }}" {% if camera == cam %}selected{% endif %}>{{ cam }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="text" name="plate" placeholder="Search Plate..." value="{{ plate }}">
+
+    <button type="submit" class="btn">🔍 Search</button>
+    <a href="{{ export_url }}" class="btn" style="background-color: #4CAF50;">⬇️ Excel</a>
+    <a href="{{ export_pdf_url }}" class="btn" style="background-color: #FF5722;">📄 PDF</a>
+</form>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Plate</th>
+            <th>Timestamp</th>
+            <th>Camera</th>
+            <th>Confidence</th>
+            <th>Region</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in data %}
+        <tr>
+            <td><img src="/static/uploads/{{ log[1] }}" width="120"></td>
+            <td>{{ log[2] }}</td>
+            <td>{{ log[3] }}</td>
+            <td>{{ log[4] }}</td>
+            <td>{{ log[5] }}</td>
+            <td>{{ log[6] }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div style="margin-top: 20px;">
+    {% if page > 1 %}
+        <a href="{{ url_for('report', page=page-1, filter=filter, start=start, end=end, camera=camera, plate=plate) }}">&laquo; Previous</a>
+    {% endif %}
+    <span style="margin: 0 10px;">Page {{ page }}</span>
+    {% if total > page_size * page %}
+        <a href="{{ url_for('report', page=page+1, filter=filter, start=start, end=end, camera=camera, plate=plate) }}">Next &raquo;</a>
+    {% endif %}
+</div>
+
+<script>
+function toggleDateInputs(value) {
+    const start = document.getElementById("startDate");
+    const end = document.getElementById("endDate");
+    if (value === "custom") {
+        start.style.display = "inline";
+        end.style.display = "inline";
+    } else {
+        start.style.display = "none";
+        end.style.display = "none";
+    }
+}
+</script>
+{% endblock %}

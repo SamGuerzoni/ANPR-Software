@@ -1,0 +1,18 @@
+{
+  "admin": {
+    "password": "admin123",
+    "role": "admin"
+  },
+  "viewer": {
+    "password": "viewer123",
+    "role": "viewer"
+  }
+    "Ratan": {
+    "password": "Ratan@9097",
+    "role": "admin"
+  }
+    "Singh": {
+    "password": "Singh@9097",
+    "role": "viewer"
+  }
+}
