@@ -6,13 +6,14 @@
   "viewer": {
     "password": "viewer123",
     "role": "viewer"
-  }
-    "Ratan": {
+  },
+  "Ratan": {
     "password": "Ratan@9097",
     "role": "admin"
-  }
-    "Singh": {
+  },
+  "Singh": {
     "password": "Singh@9097",
     "role": "viewer"
   }
 }
+
